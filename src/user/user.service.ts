@@ -32,9 +32,30 @@ export class UserService {
   }
 
   async createUser(data: Prisma.UserCreateInput): Promise<User> {
-    return this.prisma.user.create({
-      data,
-    });
+    console.log('Service received data:', data);
+    console.log('Data type:', typeof data);
+
+    if (!data) {
+      throw new Error('User data is required');
+    }
+
+    console.log('Data keys:', Object.keys(data));
+
+    // 验证必需字段
+    if (!data.email) {
+      throw new Error('Email is required');
+    }
+
+    try {
+      const result = await this.prisma.user.create({
+        data,
+      });
+      console.log('Prisma create result:', result);
+      return result;
+    } catch (error) {
+      console.error('Prisma create error:', error);
+      throw error;
+    }
   }
 
   async updateUser(params: {
